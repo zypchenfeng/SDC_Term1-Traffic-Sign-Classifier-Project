@@ -31,7 +31,6 @@ The goals / steps of this project are the following:
 [image10]: ./submit_images/3.jpg "Traffic Sign 3"
 [image11]: ./submit_images/4.jpg "Traffic Sign 4"
 [image12]: ./submit_images/5.jpg "Traffic Sign 5"
-[image13]: ./submit_images/6.jpg "Traffic Sign 6"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -81,7 +80,7 @@ Original data, no treatment at all.
 
 After Normalization and convert to Grayscale
 
-![After Normalization and Grayscale][image3]
+![image3]
 
 As a last step, I generate more data because of the non-uniform data distribution. 
 
@@ -89,16 +88,18 @@ To add more data to the the data set, I used the techniques that was first used 
 
 It inclues several techniques by using the cv2 library, including: wrap, flip, rotate etc.
 Here is the grapscale images that was warpped in the data generation process.
-![After Warp][image4]
+![image4]
 
 
 The difference between the original data set and the augmented data set is the following ... 
 
 Pre data generation
-![After Warp][image1] 
+
+![image1]
 
 Post Data Generation
-![After Warp][image5]
+
+![image5]
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
@@ -140,15 +141,32 @@ To train the model, I used the following settings:
 I have also shuffled the data using sklearn library.
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+The way I improved my model include:
+1. The original training data set could only give an validation accuracy of <90%. That is because the data set was high biased. So in order to improve the data, I have used the method to regenerate the data by wrapping, introducing noise, flipping etc.
+2. Set the batch size to 128,  set the Epochs number to 30. If not using dropout layer (set training keep rate = 1), the training accuracy was 98.9%, the validation accuracy went to 98.4%, but test accuracy only 85%
+3. If I change the Epochs to 100, the validation accuracy went to 99.5%, but test accuracy only 88%. It cleary shows the model is overfitting, so drop out layer is required.
+4. After adding in the drop layer, the model test set accuracy looks better compared to without drop out layer
+5. After run the model again (equal to add the Epochs by 30).
+5. I have tried save the model and load the saved model weight and bias.
+Here is a table summarize the improvements I did
+
+
+| Action      		|     Training Accuracy	|  Validation Accuracy | Test Accuracy
+|:---------------------:|:-------------:| :-------------:|:-------------:|
+| Original data set   	| 95.4%    | 92.1% | 85.6%
+| Add image generation     	| 98.9%    | 98.4% | 85.6%
+| Epochs from 30 to 100   	| 100%       |    99.5%    | 88.7%
+| Drop rate 0.5, Epochs 30 |   96.7%        |   96.5%     | 88.3%
+| Epochs from 30 to 100 |           |        |
 
 My final model results were:
-* training set accuracy of 99.7%
-* validation set accuracy of 99.4% 
-* test set accuracy of 93.2%
+* training set accuracy of 99.6%
+* validation set accuracy of 99.3% 
+* test set accuracy of 92.9%
 
 The training  and validation accuracy can be seen below for the 61-90 epochs
-![Training Accuracy][image6]
-![Validation Accuracy][image7]
+![image6]
+![image7]
 
 I only used LeNet to build the 2 convolution 2 fully connected network. There is some
 paper out there show more advanced work that can improve the test accuracy to 99%. But 
@@ -157,9 +175,22 @@ here I didn't try yet.
 ## The questions were not well considered during this project. Will consider later on
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
+
+    _The architecture was from the lecture_
+
 * What were some problems with the initial architecture?
+
+    _Accuracy due to biased data set and over fitting due to no drop out_
+    
 * How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
+
+    _Use the cv2 library to generate more data, and use drop out, also more iterations_
+
 * Which parameters were tuned? How were they adjusted and why?
+
+    _The Epochs number changed from 30 to 100, to improve the fitting accuracy_
+
+
 * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
 
 If a well known architecture was chosen:
@@ -174,8 +205,16 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image8] ![alt text][image9] ![alt text][image10] 
-![alt text][image11] ![alt text][image12]![alt text][image13]
+![alt text][image8]
+
+![alt text][image9] 
+
+![alt text][image10] 
+
+![alt text][image11] 
+
+![alt text][image12]
+
 
 Originally there was one 
 
@@ -186,52 +225,63 @@ Here are the results of the prediction:
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Speed limit (70km/h)  | Speed limit (70km/h)   						| 
-| No Passing   			| No Passing									|
-| Stop					| Stop											|
+| Bumpy road            | Bumpy road                                 |
+| Stop					| Roundabout mandatory 							|
 | Yield	      		    | Yield					 				        |
 | General caution		| General caution     							|
-| Bumpy road            | Bumpy road                                    |
 
-The model was able to correctly guess 6 of the 6 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was wrong on 3rd image, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of 92.7%.
+
+The possible reason for wrong prediction majorly come from that the image was rotated by 90 degree.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
 The code for making predictions on my final model is located in the 30th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is  sure that this is a speed limit sign (probability of 100%), and the image does contain a speed limit sign. The top five soft max probabilities were
+[ 4,  0,  1, 40,  7]
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | 1.00         			| Speed limit (70km/h)  						| 
-| .00     				| End of no passing								|
-| .00					| No entry										|
+| .00     				| Speed limit (20km/h)								|
+| .00					| Speed limit (30km/h)									|
+| .00	      			| Roundabout mandatory				 				    |
+| .00				    | Speed limit (100km/h)    							|
+
+For the second image predictions are [22, 29, 26, 24, 20]
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00         			| Bumpy road  						| 
+| .00     				| Bicycles crossing							|
+| .00					| Traffic signals										|
+| .00	      			| Road narrows on the right				 				    |
+| .00				    | Dangerous curve to the right     							| 
+
+For the third image predictions are [40,  0, 38, 20, 18]
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00         			| Roundabout mandatory 						| 
+| .00     				| Speed limit (20km/h)							|
+| .00					| Keep right										|
+| .00	      			| Dangerous curve to the right				 				    |
+| .00				    | General caution    							| 
+
+For the forth image predictions are [13, 15, 35, 12,  9]
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+|  1.00         			| Yield  						| 
+| .00     				| No vehicles								|
+| .00					| Ahead only										|
 | .00	      			| Priority road				 				    |
-| .00				    | Slippery road     							|
+| .00				    | No passing    							| 
 
 
-For the second image 
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| 1.00         			| Stop  						| 
-| .00     				| Bumpy road								|
-| .00					| Turn right ahead										|
-| .00	      			| Road work			 				    |
-| .00				    | Yield    							| 
-
-
-For the third image 
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .94         			| Yield  						| 
-| .04     				| No vehicles								|
-| .01					| No passing										|
-| .01	      			| Ahead only				 				    |
-| .00				    | Go straight or right     							| 
-
-
-For the forth image 
+For the fifth image predictions are
+[18, 26, 27, 24, 11]
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -239,17 +289,8 @@ For the forth image
 | .00     				| Traffic signals								|
 | .00					| Pedestrians										|
 | .00	      			| Road narrows on the right				 				    |
-| .00				    | Go straight or left     							| 
+| .00				    | Right-of-way at the next intersection     							| 
 
-For the fifth image 
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .91         			| Bumpy road  						| 
-| .09     				| Bicycles crossing							|
-| .00					| Traffic signals										|
-| .00	      			| No vehicles				 				    |
-| .00				    | Road narrows on the right     							| 
 
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
