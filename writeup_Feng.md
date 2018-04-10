@@ -2,6 +2,8 @@
 
 ## Feng Chen, Finished on 4/8/2018
 
+Modefied on 4/9 after review!
+
 ### The project is finished mostly by myself, but also partially referred to [this location](https://github.com/galenballew/Traffic-Sign-CNN)  for accuracy improvement
 
 ---
